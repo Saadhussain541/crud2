@@ -53,6 +53,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
     {
       if(kIsWeb)
       {
+        print('image function run');
 
         setState(() {
           isLoading=true;
@@ -68,7 +69,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           isLoading=false;
         });
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add Data')));
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowData(),));
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowData(),));
       }
       else
       {
@@ -91,7 +92,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
       'product_name':pname.text.toString(),
       'product_qty':pqty.text.toString(),
       'product_price':pprice.text.toString(),
-      'product_image':image,
+      'product_image':webImage==null || pImage==null?widget.productImage:image,
       'product_category':selectedCategory
     };
     await FirebaseFirestore.instance.collection('product').doc(widget.productId).update(data);
@@ -217,7 +218,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     desc: 'Dialog description here.............',
                     btnCancelOnPress: () {},
                     btnOkOnPress: () async {
-                     userImage();
+                     webImage==null||pImage==null?updateData():userImage();
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => ShowData(),));
 
 
                     },
