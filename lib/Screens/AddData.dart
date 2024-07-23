@@ -45,6 +45,7 @@ class _AddDataState extends State<AddData> {
                 isLoading=false;
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Add Data')));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ShowData(),));
             }
           else
             {
