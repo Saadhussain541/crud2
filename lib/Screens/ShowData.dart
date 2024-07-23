@@ -22,11 +22,11 @@ class _ShowDataState extends State<ShowData> {
                 builder: (context, snapshot) {
                   if(snapshot.connectionState==ConnectionState.waiting)
                     {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     }
                   if(snapshot.hasError)
                     {
-                      return Center(
+                      return const Center(
                         child: Icon(Icons.error,color: Colors.red,size: 30,),
                       );
                     }
@@ -45,7 +45,7 @@ class _ShowDataState extends State<ShowData> {
                                     radius: 65,
                                     backgroundImage: NetworkImage('${snapshot.data!.docs[index]["product_image"]}'),
                                   ),
-                                  SizedBox(width: 20,),
+                                  const SizedBox(width: 20,),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [

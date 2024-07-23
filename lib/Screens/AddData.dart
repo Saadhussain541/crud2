@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 import 'ShowData.dart';
 class AddData extends StatefulWidget {
@@ -31,10 +32,11 @@ class _AddDataState extends State<AddData> {
         {
           if(kIsWeb)
             {
+
               setState(() {
                 isLoading=true;
               });
-              UploadTask uploadTask=FirebaseStorage.instance.ref().child('ProductImage').putData(webImage!);
+              UploadTask uploadTask=FirebaseStorage.instance.ref().child('ProductImage').child(const Uuid().v1()).putData(webImage!);
               TaskSnapshot taskSnapshot=await uploadTask;
               String productImage=await taskSnapshot.ref.getDownloadURL();
               addData(productImage);
@@ -44,8 +46,8 @@ class _AddDataState extends State<AddData> {
               setState(() {
                 isLoading=false;
               });
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Add Data')));
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ShowData(),));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add Data')));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowData(),));
             }
           else
             {
@@ -128,7 +130,7 @@ class _AddDataState extends State<AddData> {
 
                     ),
                   ),
-                  SizedBox(height: 30,),
+                  const SizedBox(height: 30,),
                   Customtextfield(hintText: 'Enter your product name',
                       label: 'Product Name',
                       controller: pname,
@@ -141,7 +143,7 @@ class _AddDataState extends State<AddData> {
                   }),
 
 
-                  SizedBox(height: 30,),
+                  const SizedBox(height: 30,),
                   Customtextfield(hintText: 'Enter your product price',
                       label: 'Product Price',
                       controller: pprice,
@@ -152,7 +154,7 @@ class _AddDataState extends State<AddData> {
                           return 'Product price is required';
                         }
                       }),
-                  SizedBox(height: 30,),
+                  const SizedBox(height: 30,),
                   Customtextfield(hintText: 'Enter your product quantity',
                       label: 'Product Quantity',
                       controller: pqty,
@@ -163,7 +165,7 @@ class _AddDataState extends State<AddData> {
                           return 'Product quantity is required';
                         }
                       }),
-                  SizedBox(height: 30,),
+                  const SizedBox(height: 30,),
                   DropdownButtonFormField(
                     value: selectedCategory,
                     onChanged: (value)
@@ -175,14 +177,14 @@ class _AddDataState extends State<AddData> {
                       items: ['cat1','cat2','cat3'].map((String value){
                         return DropdownMenuItem(child: Text(value),value: value,);
                       }).toList(),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder()
                     ),
                       )
 
                 ],
               )),
-              SizedBox(height: 30,),
+              const SizedBox(height: 30,),
               ElevatedButton(onPressed: (){
                 if(key.currentState!.validate())
                   {
@@ -190,16 +192,16 @@ class _AddDataState extends State<AddData> {
                   }
                 else
                   {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please Fill All Fields')));
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please Fill All Fields')));
                   }
 
 
-              }, child: isLoading?CircularProgressIndicator():Text('Add Data')),
+              }, child: isLoading?const CircularProgressIndicator():const Text('Add Data')),
 
-              SizedBox(height: 30,),
+              const SizedBox(height: 30,),
               TextButton(onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ShowData(),));
-              }, child: Text('Show Data'))
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowData(),));
+              }, child: const Text('Show Data'))
             ],
           ),
         ),
