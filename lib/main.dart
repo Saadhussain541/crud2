@@ -1,5 +1,5 @@
 
-import 'package:crud2/AddData.dart';
+import 'package:crud2/Screens/AddData.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
