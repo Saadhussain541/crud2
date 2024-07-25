@@ -29,10 +29,34 @@ class _DetailScreenState extends State<DetailScreen> {
             if(snapshot.hasData)
               {
                 var productData=snapshot.data!.data();
+                bool isFavourite=productData?['wish_list'];
                 if(productData!=null)
                   {
                     return Center(
-                      child: Text(productData['description']),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(productData['description']),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Favourite'),
+                              SizedBox(width: 15,),
+                              IconButton(onPressed: () async{
+                                FirebaseFirestore.instance.collection('product').doc(widget.id).update(
+                                    {
+                                      'wish_list':!isFavourite
+                                    }
+                                );
+
+                              }, icon: isFavourite?Icon(Icons.favorite):Icon(Icons.favorite_border)
+
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     );
                   }
                 else

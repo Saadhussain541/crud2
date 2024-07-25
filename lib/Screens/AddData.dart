@@ -71,6 +71,7 @@ class _AddDataState extends State<AddData> {
       'product_qty':pqty.text.toString(),
       'product_price':pprice.text.toString(),
       'product_image':image,
+      'wish_list':false,
       'product_category':selectedCategory
 
     });
