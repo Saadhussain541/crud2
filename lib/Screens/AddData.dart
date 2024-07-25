@@ -201,7 +201,8 @@ class _AddDataState extends State<AddData> {
               const SizedBox(height: 30,),
               TextButton(onPressed: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowData(),));
-              }, child: const Text('Show Data'))
+              }, child: const Text('Show Data')),
+              Text('👋 🌍')
             ],
           ),
         ),

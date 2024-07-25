@@ -88,6 +88,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
   void updateData({String? image}) async
   {
+
     Map<String,dynamic> data={
       'product_name':pname.text.toString(),
       'product_qty':pqty.text.toString(),
@@ -219,6 +220,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     btnCancelOnPress: () {},
                     btnOkOnPress: () async {
                      webImage==null||pImage==null?updateData():userImage();
+                     print(webImage);
+                     print(pImage);
                      Navigator.push(context, MaterialPageRoute(builder: (context) => ShowData(),));
 
 
