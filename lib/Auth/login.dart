@@ -76,7 +76,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple
                       ),
-                      onPressed: (){}, child: Text('Login',style: TextStyle(color: Colors.white),))),
+                      onPressed: (){
+                        UserController().loginUser(loginServices.emailController.text.toString(), loginServices.passwordController.text.toString(), context);
+
+                      }, child: Text('Login',style: TextStyle(color: Colors.white),))),
               SizedBox(height: 10,),
               TextButton(onPressed: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(),));

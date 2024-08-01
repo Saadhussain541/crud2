@@ -2,6 +2,7 @@ import 'package:achievement_view/achievement_view.dart';
 import 'package:crud2/Auth/login.dart';
 import 'package:crud2/Controller/UserController/user_controller.dart';
 import 'package:crud2/Interfaces/Auth/register_service.dart';
+import 'package:crud2/Model/user_model.dart';
 import 'package:crud2/Widgets/CustomTextField.dart';
 import 'package:flutter/material.dart';
 class SignUpScreen extends StatefulWidget {
@@ -13,8 +14,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
 
-  String selectedGender='Male';
-  String selectedCountry='Pakistan';
+
   final RegisterService registerService=RegisterService();
 
   @override
@@ -67,11 +67,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 SizedBox(height: 20,),
                 DropdownButtonFormField(
-                  value: selectedGender,
+                  value: MyUser().gender,
                   onChanged: (value)
                 {
                   setState(() {
-                    selectedGender=value!;
+                    MyUser().gender=value!;
                   });
                 },
                   items: ['Male','Female','Other'].map((String value){
@@ -84,11 +84,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 SizedBox(height: 20,),
                 DropdownButtonFormField(
-                  value: selectedCountry,
+                  value: MyUser().country,
                   onChanged: (value)
                   {
                     setState(() {
-                      selectedCountry=value!;
+                      MyUser().country=value!;
                     });
                   },
                   items: ['Pakistan','Iran','Saudia Arabia'].map((String value){
@@ -158,7 +158,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onPressed: (){
                           if(registerService.passwordController.text==registerService.cPasswordController.text)
                             {
-                              UserController().registerUser(RegisterService().emailController.text, RegisterService().passwordController.text);
+                              try
+                                  {
+                                    UserController().registerUser(registerService.emailController.text.toString(), registerService.passwordController.text.toString(),
+                                      registerService.firstNameController.text.toString(),
+                                      registerService.lastNameController.text.toString(),
+                                      registerService.phoneController.text.toString()
+                                    );
+                                    AchievementView(
+                                        title: 'Success',
+                                        subTitle: 'Account Created',
+                                        icon: Icon(Icons.emoji_emotions,color: Colors.white,),
+                                        color: Colors.green
+                                    ).show(context);
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+                                  }
+                                  catch(e)
+                          {
+                            print(e);
+                          }
                             }
                           else
                             {

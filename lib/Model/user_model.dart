@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class MyUser
 {
   String? id;
@@ -8,14 +10,17 @@ class MyUser
   String? phone;
   String? email;
   String? password;
+  Timestamp? createdTime;
 
   MyUser(
       {this.id,
       this.firstName,
       this.lastName,
-      this.gender,
-      this.country,
+      this.gender='Male',
+      this.country='Pakistan',
       this.phone,
       this.email,
-      this.password});
+      this.password,
+      this.createdTime
+      });
 }
