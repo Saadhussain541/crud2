@@ -10,16 +10,17 @@ import 'package:uuid/uuid.dart';
 
 import '../Widgets/CustomTextField.dart';
 import 'ShowData.dart';
-class UpdateScreen extends StatefulWidget {
-  String productId;
-  String productName;
-  String productPrice;
-  String productQty;
-  String productCategory;
-String productImage;
 
-  UpdateScreen({required this.productImage,required this.productPrice,
-  required this.productName, required this.productQty, required this.productCategory,
+class UpdateScreen extends StatefulWidget {
+  final String productId;
+  final String productName;
+  final String productPrice;
+  final String productQty;
+  final String productCategory;
+  final String productImage;
+
+  const UpdateScreen({super.key, required this.productImage, required this.productPrice,
+    required this.productName, required this.productQty, required this.productCategory,
     required this.productId
   });
 
@@ -31,76 +32,77 @@ class _UpdateScreenState extends State<UpdateScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    pname.text=widget.productName;
-    pprice.text=widget.productPrice;
-    pqty.text=widget.productQty;
-    selectedCategory=widget.productCategory;
+    pname.text = widget.productName;
+    pprice.text = widget.productPrice;
+    pqty.text = widget.productQty;
+    selectedCategory = widget.productCategory;
     super.initState();
   }
-  final pname=TextEditingController();
-  final pprice=TextEditingController();
-  final pqty=TextEditingController();
-  String selectedCategory='cat1';
+
+  final pname = TextEditingController();
+  final pprice = TextEditingController();
+  final pqty = TextEditingController();
+  String selectedCategory = 'cat1';
   File? pImage;
   Uint8List? webImage;
 
-  bool isLoading=false;
-  final key=GlobalKey<FormState>();
+  bool isLoading = false;
+  final key = GlobalKey<FormState>();
 
   void userImage() async
   {
-    try
-    {
-      if(kIsWeb)
-      {
+    try {
+      if (kIsWeb) {
         print('image function run');
 
         setState(() {
-          isLoading=true;
+          isLoading = true;
         });
-        UploadTask uploadTask=FirebaseStorage.instance.ref().child('ProductImage').child(const Uuid().v1()).putData(webImage!);
-        TaskSnapshot taskSnapshot=await uploadTask;
-        String productImage=await taskSnapshot.ref.getDownloadURL();
+        UploadTask uploadTask = FirebaseStorage.instance.ref().child(
+            'ProductImage').child(const Uuid().v1()).putData(webImage!);
+        TaskSnapshot taskSnapshot = await uploadTask;
+        String productImage = await taskSnapshot.ref.getDownloadURL();
         updateData(image: productImage);
-        pname.text='';
-        pqty.text='';
-        pprice.text='';
+        pname.text = '';
+        pqty.text = '';
+        pprice.text = '';
         setState(() {
-          isLoading=false;
+          isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add Data')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Add Data')));
         // Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowData(),));
       }
-      else
-      {
-        UploadTask uploadTask=FirebaseStorage.instance.ref().child('ProductImage').putFile(pImage!);
-        TaskSnapshot taskSnapshot=await uploadTask;
-        String productImage=await taskSnapshot.ref.getDownloadURL();
+      else {
+        UploadTask uploadTask = FirebaseStorage.instance.ref().child(
+            'ProductImage').putFile(pImage!);
+        TaskSnapshot taskSnapshot = await uploadTask;
+        String productImage = await taskSnapshot.ref.getDownloadURL();
         updateData(image: productImage);
       }
-
     }
-    catch(e)
-    {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())));
     }
   }
 
   void updateData({String? image}) async
   {
-
-    Map<String,dynamic> data={
-      'product_name':pname.text.toString(),
-      'product_qty':pqty.text.toString(),
-      'product_price':pprice.text.toString(),
-      'product_image':webImage==null || pImage==null?widget.productImage:image,
-      'product_category':selectedCategory
+    Map<String, dynamic> data = {
+      'product_name': pname.text.toString(),
+      'product_qty': pqty.text.toString(),
+      'product_price': pprice.text.toString(),
+      'product_image': webImage == null || pImage == null
+          ? widget.productImage
+          : image,
+      'product_category': selectedCategory
     };
-    await FirebaseFirestore.instance.collection('product').doc(widget.productId).update(data);
-
-
-
+    await FirebaseFirestore.instance.collection('product')
+        .doc(widget.productId)
+        .update(data);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,39 +119,38 @@ class _UpdateScreenState extends State<UpdateScreen> {
                       GestureDetector(
                         onTap: () async
                         {
-                          if(kIsWeb)
-                          {
-                            XFile? pickImage=await ImagePicker().pickImage(source: ImageSource.gallery);
-                            if(pickImage!=null)
-                            {
-                              var convertedImage=await pickImage.readAsBytes();
+                          if (kIsWeb) {
+                            XFile? pickImage = await ImagePicker().pickImage(
+                                source: ImageSource.gallery);
+                            if (pickImage != null) {
+                              var convertedImage = await pickImage
+                                  .readAsBytes();
                               setState(() {
-                                webImage=convertedImage;
+                                webImage = convertedImage;
                               });
                             }
-                            else
-                            {
-                              XFile? pickImage= await ImagePicker().pickImage(source: ImageSource.gallery);
-                              if(pickImage!=null)
-                              {
-                                File convertedFile=File(pickImage.path);
+                            else {
+                              XFile? pickImage = await ImagePicker().pickImage(
+                                  source: ImageSource.gallery);
+                              if (pickImage != null) {
+                                File convertedFile = File(pickImage.path);
                                 setState(() {
-                                  pImage=convertedFile;
+                                  pImage = convertedFile;
                                 });
                               }
-
                             }
-
                           }
-
                         },
-                        child: kIsWeb?CircleAvatar(
+                        child: kIsWeb ? CircleAvatar(
                           radius: 100,
-                          backgroundImage: webImage!=null?MemoryImage(webImage!):NetworkImage(widget.productImage),
+                          backgroundImage: webImage != null ? MemoryImage(
+                              webImage!) : NetworkImage(widget.productImage),
 
-                        ):CircleAvatar(
+                        ) : CircleAvatar(
                           radius: 100,
-                          backgroundImage: pImage!=null?FileImage(pImage!):NetworkImage(widget.productImage),
+                          backgroundImage: pImage != null
+                              ? FileImage(pImage!)
+                              : NetworkImage(widget.productImage),
 
                         ),
                       ),
@@ -157,10 +158,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
                       Customtextfield(hintText: 'Enter your product name',
                           label: 'Product Name',
                           controller: pname,
-                          validator: (value)
-                          {
-                            if(value==null||value=='')
-                            {
+                          validator: (value) {
+                            if (value == null || value == '') {
                               return 'Product name is required';
                             }
                           }),
@@ -170,10 +169,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
                       Customtextfield(hintText: 'Enter your product price',
                           label: 'Product Price',
                           controller: pprice,
-                          validator: (value)
-                          {
-                            if(value==null||value=='')
-                            {
+                          validator: (value) {
+                            if (value == null || value == '') {
                               return 'Product price is required';
                             }
                           }),
@@ -181,24 +178,22 @@ class _UpdateScreenState extends State<UpdateScreen> {
                       Customtextfield(hintText: 'Enter your product quantity',
                           label: 'Product Quantity',
                           controller: pqty,
-                          validator: (value)
-                          {
-                            if(value==null||value=='')
-                            {
+                          validator: (value) {
+                            if (value == null || value == '') {
                               return 'Product quantity is required';
                             }
                           }),
                       const SizedBox(height: 30,),
                       DropdownButtonFormField(
                         value: selectedCategory,
-                        onChanged: (value)
-                        {
+                        onChanged: (value) {
                           setState(() {
-                            selectedCategory=value!;
+                            selectedCategory = value!;
                           });
                         },
-                        items: ['cat1','cat2','cat3'].map((String value){
-                          return DropdownMenuItem(child: Text(value),value: value,);
+                        items: ['cat1', 'cat2', 'cat3'].map((String value) {
+                          return DropdownMenuItem(
+                            child: Text(value), value: value,);
                         }).toList(),
                         decoration: const InputDecoration(
                             border: OutlineInputBorder()
@@ -208,9 +203,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     ],
                   )),
               const SizedBox(height: 30,),
-              ElevatedButton(onPressed: (){
-                if(key.currentState!.validate())
-                {
+              ElevatedButton(onPressed: () {
+                if (key.currentState!.validate()) {
                   AwesomeDialog(
                     context: context,
                     dialogType: DialogType.warning,
@@ -219,23 +213,24 @@ class _UpdateScreenState extends State<UpdateScreen> {
                     desc: 'Dialog description here.............',
                     btnCancelOnPress: () {},
                     btnOkOnPress: () async {
-                     webImage==null||pImage==null?updateData():userImage();
-                     print(webImage);
-                     print(pImage);
-                     Navigator.push(context, MaterialPageRoute(builder: (context) => ShowData(),));
-
-
+                      webImage == null || pImage == null
+                          ? updateData()
+                          : userImage();
+                      print(webImage);
+                      print(pImage);
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => ShowData(),));
                     },
                   ).show();
-
                 }
-                else
-                {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please Fill All Fields')));
+                else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please Fill All Fields')));
                 }
-
-
-              }, child: isLoading?const CircularProgressIndicator():const Text('Update Data')),
+              },
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Update Data')),
 
             ],
           ),

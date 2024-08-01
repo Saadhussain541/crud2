@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import 'ShowData.dart';
+
 class AddData extends StatefulWidget {
   const AddData({super.key});
 
@@ -16,66 +17,63 @@ class AddData extends StatefulWidget {
 }
 
 class _AddDataState extends State<AddData> {
-  final pname=TextEditingController();
-  final pprice=TextEditingController();
-  final pqty=TextEditingController();
-  String selectedCategory='cat1';
+  final pname = TextEditingController();
+  final pprice = TextEditingController();
+  final pqty = TextEditingController();
+  String selectedCategory = 'cat1';
   File? pImage;
   Uint8List? webImage;
 
-  bool isLoading=false;
-  final key=GlobalKey<FormState>();
+  bool isLoading = false;
+  final key = GlobalKey<FormState>();
 
   void userImage() async
   {
-    try
-        {
-          if(kIsWeb)
-            {
-
-              setState(() {
-                isLoading=true;
-              });
-              UploadTask uploadTask=FirebaseStorage.instance.ref().child('ProductImage').child(const Uuid().v1()).putData(webImage!);
-              TaskSnapshot taskSnapshot=await uploadTask;
-              String productImage=await taskSnapshot.ref.getDownloadURL();
-              addData(productImage);
-              pname.text='';
-              pqty.text='';
-              pprice.text='';
-              setState(() {
-                isLoading=false;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add Data')));
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowData(),));
-            }
-          else
-            {
-              UploadTask uploadTask=FirebaseStorage.instance.ref().child('ProductImage').putFile(pImage!);
-              TaskSnapshot taskSnapshot=await uploadTask;
-              String productImage=await taskSnapshot.ref.getDownloadURL();
-              addData(productImage);
-            }
-
-        }
-        catch(e)
-    {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    try {
+      if (kIsWeb) {
+        setState(() {
+          isLoading = true;
+        });
+        UploadTask uploadTask = FirebaseStorage.instance.ref().child(
+            'ProductImage').child(const Uuid().v1()).putData(webImage!);
+        TaskSnapshot taskSnapshot = await uploadTask;
+        String productImage = await taskSnapshot.ref.getDownloadURL();
+        addData(productImage);
+        pname.text = '';
+        pqty.text = '';
+        pprice.text = '';
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Add Data')));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const ShowData(),));
+      }
+      else {
+        UploadTask uploadTask = FirebaseStorage.instance.ref().child(
+            'ProductImage').putFile(pImage!);
+        TaskSnapshot taskSnapshot = await uploadTask;
+        String productImage = await taskSnapshot.ref.getDownloadURL();
+        addData(productImage);
+      }
+    }
+    catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())));
     }
   }
-  
+
   void addData(String? image) async
   {
     await FirebaseFirestore.instance.collection('product').add({
-      'product_name':pname.text.toString(),
-      'product_qty':pqty.text.toString(),
-      'product_price':pprice.text.toString(),
-      'product_image':image,
-      'wish_list':false,
-      'product_category':selectedCategory
-
+      'product_name': pname.text.toString(),
+      'product_qty': pqty.text.toString(),
+      'product_price': pprice.text.toString(),
+      'product_image': image,
+      'wish_list': false,
+      'product_category': selectedCategory
     });
-    
   }
 
 
@@ -91,119 +89,113 @@ class _AddDataState extends State<AddData> {
               Form(
                   key: key,
                   child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () async
-                    {
-                      if(kIsWeb)
+                    children: [
+                      GestureDetector(
+                        onTap: () async
                         {
-                          XFile? pickImage=await ImagePicker().pickImage(source: ImageSource.gallery);
-                          if(pickImage!=null)
-                            {
-                              var convertedImage=await pickImage.readAsBytes();
+                          if (kIsWeb) {
+                            XFile? pickImage = await ImagePicker().pickImage(
+                                source: ImageSource.gallery);
+                            if (pickImage != null) {
+                              var convertedImage = await pickImage
+                                  .readAsBytes();
                               setState(() {
-                                webImage=convertedImage;
+                                webImage = convertedImage;
                               });
                             }
-                          else
-                            {
-                              XFile? pickImage= await ImagePicker().pickImage(source: ImageSource.gallery);
-                              if(pickImage!=null)
-                                {
-                                  File convertedFile=File(pickImage.path);
-                                  setState(() {
-                                    pImage=convertedFile;
-                                  });
-                                }
-
+                            else {
+                              XFile? pickImage = await ImagePicker().pickImage(
+                                  source: ImageSource.gallery);
+                              if (pickImage != null) {
+                                File convertedFile = File(pickImage.path);
+                                setState(() {
+                                  pImage = convertedFile;
+                                });
+                              }
                             }
+                          }
+                        },
+                        child: kIsWeb ? CircleAvatar(
+                          radius: 100,
+                          backgroundImage: webImage != null ? MemoryImage(
+                              webImage!) : null,
 
-                        }
+                        ) : CircleAvatar(
+                          radius: 100,
+                          backgroundImage: pImage != null
+                              ? FileImage(pImage!)
+                              : null,
 
-                    },
-                    child: kIsWeb?CircleAvatar(
-                      radius: 100,
-                      backgroundImage: webImage!=null?MemoryImage(webImage!):null,
-
-                    ):CircleAvatar(
-                      radius: 100,
-                      backgroundImage: pImage!=null?FileImage(pImage!):null,
-
-                    ),
-                  ),
-                  const SizedBox(height: 30,),
-                  Customtextfield(hintText: 'Enter your product name',
-                      label: 'Product Name',
-                      controller: pname,
-                      validator: (value)
-                  {
-                    if(value==null||value=='')
-                      {
-                        return 'Product name is required';
-                      }
-                  }),
+                        ),
+                      ),
+                      const SizedBox(height: 30,),
+                      Customtextfield(hintText: 'Enter your product name',
+                          label: 'Product Name',
+                          controller: pname,
+                          validator: (value) {
+                            if (value == null || value == '') {
+                              return 'Product name is required';
+                            }
+                          }),
 
 
-                  const SizedBox(height: 30,),
-                  Customtextfield(hintText: 'Enter your product price',
-                      label: 'Product Price',
-                      controller: pprice,
-                      validator: (value)
-                      {
-                        if(value==null||value=='')
-                        {
-                          return 'Product price is required';
-                        }
-                      }),
-                  const SizedBox(height: 30,),
-                  Customtextfield(hintText: 'Enter your product quantity',
-                      label: 'Product Quantity',
-                      controller: pqty,
-                      validator: (value)
-                      {
-                        if(value==null||value=='')
-                        {
-                          return 'Product quantity is required';
-                        }
-                      }),
-                  const SizedBox(height: 30,),
-                  DropdownButtonFormField(
-                    value: selectedCategory,
-                    onChanged: (value)
-                    {
-                      setState(() {
-                        selectedCategory=value!;
-                      });
-                    },
-                      items: ['cat1','cat2','cat3'].map((String value){
-                        return DropdownMenuItem(child: Text(value),value: value,);
-                      }).toList(),
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder()
-                    ),
+                      const SizedBox(height: 30,),
+                      Customtextfield(hintText: 'Enter your product price',
+                          label: 'Product Price',
+                          controller: pprice,
+                          validator: (value) {
+                            if (value == null || value == '') {
+                              return 'Product price is required';
+                            }
+                          }),
+                      const SizedBox(height: 30,),
+                      Customtextfield(hintText: 'Enter your product quantity',
+                          label: 'Product Quantity',
+                          controller: pqty,
+                          validator: (value) {
+                            if (value == null || value == '') {
+                              return 'Product quantity is required';
+                            }
+                          }),
+                      const SizedBox(height: 30,),
+                      DropdownButtonFormField(
+                        value: selectedCategory,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedCategory = value!;
+                          });
+                        },
+                        items: ['cat1', 'cat2', 'cat3'].map((String value) {
+                          return DropdownMenuItem(
+                            value: value, child: Text(value),);
+                        }).toList(),
+                        decoration: const InputDecoration(
+                            border: OutlineInputBorder()
+                        ),
                       )
 
-                ],
-              )),
+                    ],
+                  )),
               const SizedBox(height: 30,),
-              ElevatedButton(onPressed: (){
-                if(key.currentState!.validate())
-                  {
-                    userImage();
-                  }
-                else
-                  {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please Fill All Fields')));
-                  }
-
-
-              }, child: isLoading?const CircularProgressIndicator():const Text('Add Data')),
+              ElevatedButton(onPressed: () {
+                if (key.currentState!.validate()) {
+                  userImage();
+                }
+                else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please Fill All Fields')));
+                }
+              },
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Add Data')),
 
               const SizedBox(height: 30,),
-              TextButton(onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowData(),));
+              TextButton(onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const ShowData(),));
               }, child: const Text('Show Data')),
-              Text('👋 🌍')
+              const Text('👋 🌍')
             ],
           ),
         ),

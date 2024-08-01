@@ -19,8 +19,8 @@ class _ShowDataState extends State<ShowData> {
       appBar: AppBar(
         actions: [
           IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => WishListScreen(),));
-          }, icon: Icon(Icons.favorite))
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const WishListScreen(),));
+          }, icon: const Icon(Icons.favorite))
         ],
       ),
       body: Center(
@@ -35,7 +35,7 @@ class _ShowDataState extends State<ShowData> {
                     search=value;
                   });
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   label: Text("Search"),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -43,10 +43,10 @@ class _ShowDataState extends State<ShowData> {
                 ),
 
               ),
-              SizedBox(height: 20,),
+              const SizedBox(height: 20,),
               StreamBuilder(
                 stream:search==''|| search==null?FirebaseFirestore.instance.collection('product').snapshots():
-                FirebaseFirestore.instance.collection('product').where('product_name',isGreaterThanOrEqualTo: '$search').where('product_name',isLessThanOrEqualTo: search! + '\uf8ff').snapshots()
+                FirebaseFirestore.instance.collection('product').where('product_name',isGreaterThanOrEqualTo: '$search').where('product_name',isLessThanOrEqualTo: '${search!}\uf8ff').snapshots()
                 ,
                 builder: (context, snapshot) {
                   if(snapshot.connectionState==ConnectionState.waiting)
@@ -88,15 +88,15 @@ class _ShowDataState extends State<ShowData> {
                                           children: [
                                             CircleAvatar(
                                               radius: 65,
-                                              backgroundImage: NetworkImage('$pImg'),
+                                              backgroundImage: NetworkImage(pImg),
                                             ),
                                             const SizedBox(width: 20,),
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text('$pname'),
-                                                Text('$pprice'),
-                                                Text('$pqty'),
+                                                Text(pname),
+                                                Text(pprice),
+                                                Text(pqty),
                                               ],
                                             ),
                                           ],
@@ -118,7 +118,7 @@ class _ShowDataState extends State<ShowData> {
 
 
 
-                                            }, icon: Icon(Icons.delete)),
+                                            }, icon: const Icon(Icons.delete)),
                                             IconButton(onPressed: (){
                                               Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateScreen(
                                                 productCategory: pcat,
@@ -128,7 +128,7 @@ class _ShowDataState extends State<ShowData> {
                                                 productQty: pqty,
                                                 productImage: pImg,
                                               ),));
-                                            }, icon: Icon(Icons.edit)),
+                                            }, icon: const Icon(Icons.edit)),
                                           ],
                                         )
 
@@ -148,7 +148,7 @@ class _ShowDataState extends State<ShowData> {
                                         }
                                       );
 
-                                    }, icon: isFavourite?Icon(Icons.favorite):Icon(Icons.favorite_border)
+                                    }, icon: isFavourite?const Icon(Icons.favorite):const Icon(Icons.favorite_border)
 
                                     ))
                               ],

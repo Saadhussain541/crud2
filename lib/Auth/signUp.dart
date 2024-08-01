@@ -1,3 +1,7 @@
+import 'package:achievement_view/achievement_view.dart';
+import 'package:crud2/Auth/login.dart';
+import 'package:crud2/Controller/UserController/user_controller.dart';
+import 'package:crud2/Interfaces/Auth/register_service.dart';
 import 'package:crud2/Widgets/CustomTextField.dart';
 import 'package:flutter/material.dart';
 class SignUpScreen extends StatefulWidget {
@@ -8,14 +12,11 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final firstNameController=TextEditingController();
-  final lastNameController=TextEditingController();
+
   String selectedGender='Male';
   String selectedCountry='Pakistan';
-  final phoneController=TextEditingController();
-  final emailController=TextEditingController();
-  final passwordController=TextEditingController();
-  final CPasswordController=TextEditingController();
+  final RegisterService registerService=RegisterService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +39,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Customtextfield(
                           hintText: "Enter your first name",
                           label: 'First Name',
-                          controller: firstNameController,
+                          controller: registerService.firstNameController,
                           validator: (value)
                       {
                         if(value==''||value==null)
@@ -52,7 +53,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Customtextfield(
                           hintText: "Enter your last name",
                           label: 'Last Name',
-                          controller: lastNameController,
+                          controller: registerService.lastNameController,
                           validator: (value)
                           {
                             if(value==''||value==null)
@@ -102,7 +103,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Customtextfield(
                     hintText: "Enter your phone name",
                     label: 'Phone',
-                    controller: phoneController,
+                    controller: registerService.phoneController,
                     validator: (value)
                     {
                       if(value==''||value==null)
@@ -114,7 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Customtextfield(
                     hintText: "Enter your email",
                     label: 'Email',
-                    controller: emailController,
+                    controller:registerService.emailController,
                     validator: (value)
                     {
                       if(value==''||value==null)
@@ -126,7 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Customtextfield(
                     hintText: "Enter your password",
                     label: 'Password',
-                    controller: passwordController,
+                    controller: registerService.passwordController,
                     validator: (value)
                     {
                       if(value==''||value==null)
@@ -138,7 +139,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Customtextfield(
                     hintText: "Enter your confirm password",
                     label: 'Confirm Password',
-                    controller: CPasswordController,
+                    controller: registerService.cPasswordController,
                     validator: (value)
                     {
                       if(value==''||value==null)
@@ -146,6 +147,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return 'confirm password is  required';
                       }
                     }),
+                SizedBox(height: 30,),
+                SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple
+                        ),
+                        onPressed: (){
+                          if(registerService.passwordController.text==registerService.cPasswordController.text)
+                            {
+                              UserController().registerUser(RegisterService().emailController.text, RegisterService().passwordController.text);
+                            }
+                          else
+                            {
+                              AchievementView(
+                                title: 'Error',
+                                subTitle: 'Password is invliad',
+                                icon: Icon(Icons.error,color: Colors.white,),
+                                color: Colors.red
+                              ).show(context);
+                            }
+
+                        }, child: Text('Sign Up',style: TextStyle(color: Colors.white),))),
+                SizedBox(height: 10,),
+                TextButton(onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+
+                }, child: Text('Already Accout | Sign In'))
             
             
               ],

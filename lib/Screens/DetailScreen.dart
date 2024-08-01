@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 class DetailScreen extends StatefulWidget {
   String id;
-  DetailScreen({required this.id});
+  DetailScreen({super.key, required this.id});
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -18,11 +18,11 @@ class _DetailScreenState extends State<DetailScreen> {
           builder: (context, snapshot) {
             if(snapshot.connectionState==ConnectionState.waiting)
               {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
             if(snapshot.hasError)
               {
-                return Center(
+                return const Center(
                   child: Text('There has some error'),
                 );
               }
@@ -41,8 +41,8 @@ class _DetailScreenState extends State<DetailScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('Favourite'),
-                              SizedBox(width: 15,),
+                              const Text('Favourite'),
+                              const SizedBox(width: 15,),
                               IconButton(onPressed: () async{
                                 FirebaseFirestore.instance.collection('product').doc(widget.id).update(
                                     {
@@ -50,7 +50,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     }
                                 );
 
-                              }, icon: isFavourite?Icon(Icons.favorite):Icon(Icons.favorite_border)
+                              }, icon: isFavourite?const Icon(Icons.favorite):const Icon(Icons.favorite_border)
 
                               )
                             ],
@@ -61,7 +61,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   }
                 else
                   {
-                    Center(
+                    const Center(
                       child: Text('No Data found'),
                     );
                   }

@@ -1,3 +1,6 @@
+import 'package:crud2/Auth/signUp.dart';
+import 'package:crud2/Controller/UserController/user_controller.dart';
+import 'package:crud2/Interfaces/Auth/login_services.dart';
 import 'package:crud2/Widgets/CustomTextField.dart';
 import 'package:flutter/material.dart';
 class LoginScreen extends StatefulWidget {
@@ -8,45 +11,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final emailController=TextEditingController();
-  final passwordController=TextEditingController();
-  bool isValidEmail(String email) {
-    // Simple validation using regex
-    String emailPattern =
-        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'; // Regex pattern for valid email
-    RegExp regex = RegExp(emailPattern);
-    return regex.hasMatch(email);
-  }
-  bool isPasswordValid(String password) {
-    // Check if password is at least 8 characters long
-    if (password.length < 8) {
-      return false;
-    }
 
-    // Check if password contains at least one uppercase letter
-    if (!password.contains(RegExp(r'[A-Z]'))) {
-      return false;
-    }
 
-    // Check if password contains at least one lowercase letter
-    if (!password.contains(RegExp(r'[a-z]'))) {
-      return false;
-    }
-
-    // Check if password contains at least one digit
-    if (!password.contains(RegExp(r'[0-9]'))) {
-      return false;
-    }
-
-    // Check if password contains at least one special character
-    // You can define what special characters are allowed based on your requirements
-    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-      return false;
-    }
-
-    // If all criteria are met, return true
-    return true;
-  }
+  LoginServices loginServices=LoginServices();
 
   final key=GlobalKey<FormState>();
   @override
@@ -67,16 +34,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   key: key,
                   child: Column(children: [
                 Customtextfield(
+
                     hintText: 'Enter your email',
                     label: 'Email',
-                    controller: emailController,
+                    controller: loginServices.emailController,
                     validator: (value)
                 {
                   if(value=='' || value==null)
                     {
                       return 'email is required';
                     }
-                   if(isValidEmail(value))
+                   if(UserController().isValidEmail(value))
                     {
                       return 'Email is inValid';
                     }
@@ -86,14 +54,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     Customtextfield(
                         hintText: 'Enter your password',
                         label: 'Password',
-                        controller: emailController,
+                        controller: loginServices.passwordController,
                         validator: (value)
                         {
                           if(value=='' || value==null)
                           {
                             return 'password is required';
                           }
-                          if(isPasswordValid(value))
+                          if(UserController().isPasswordValid(value))
                           {
                             return 'password is inValid';
                           }
@@ -101,9 +69,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         }),
               ],)),
               SizedBox(height: 20,),
-              ElevatedButton(onPressed: (){}, child: Text('Login')),
+              SizedBox(
+                  width: double.infinity,
+                  height: 40,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple
+                      ),
+                      onPressed: (){}, child: Text('Login',style: TextStyle(color: Colors.white),))),
               SizedBox(height: 10,),
               TextButton(onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpScreen(),));
 
               }, child: Text('Register Accout | Sign Up'))
             ],

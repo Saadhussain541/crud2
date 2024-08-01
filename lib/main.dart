@@ -2,6 +2,7 @@
 import 'package:crud2/Auth/login.dart';
 import 'package:crud2/Auth/signUp.dart';
 import 'package:crud2/Screens/AddData.dart';
+import 'package:crud2/Screens/ShowData.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SignUpScreen(),
+      home: SignUpScreen (),
     );
   }
 }
