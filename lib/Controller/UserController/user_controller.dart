@@ -1,15 +1,20 @@
+import 'dart:async';
+
 import 'package:achievement_view/achievement_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crud2/Interfaces/Auth/register_service.dart';
 import 'package:crud2/Model/user_model.dart';
+import 'package:crud2/Services/user_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class UserController
 {
   FirebaseAuth auth=FirebaseAuth.instance;
-  FirebaseFirestore firestore=FirebaseFirestore.instance;
+  MyUser currentUser=MyUser();
+
   Future<bool> registerUser(String email,String password,String firstName,String lastName,String phone)async
   {
     final RegisterService registerService=RegisterService();
@@ -26,18 +31,7 @@ class UserController
         user.phone =phone;
         user.firstName = firstName;
         user.lastName = lastName;
-
-        firestore.collection('users').doc(authResult.user!.uid).set({
-          "uid": user.id,
-          "email": user.email,
-          "password": user.password,
-          "gender": user.gender,
-          "country": user.country,
-          'acountCreated': Timestamp.now(),
-          "phone": user.phone,
-          "firstname": user.firstName,
-          "lastname": user.lastName
-        });
+        UserDatabase().createUserInDb(user);
       }
       return true;
     }
@@ -54,13 +48,19 @@ class UserController
 
     try
         {
-          UserCredential loginAuth=await auth.signInWithEmailAndPassword(email: email, password: password);
-          AchievementView(
-            title: 'User Login',
-            color: Colors.green,
-            icon: Icon(Icons.emoji_emotions),
+          UserCredential loginResult=await auth.signInWithEmailAndPassword(email: email, password: password);
+          if(loginResult!=null)
+            {
+              currentUser=await UserDatabase().getUserById(loginResult.user!.uid);
+              AchievementView(
+                title: 'User Login',
+                color: Colors.green,
+                icon: Icon(Icons.emoji_emotions),
 
-          ).show(context);
+              ).show(context);
+              print(currentUser.lastName);
+            }
+
 
           return true;
 
@@ -75,6 +75,51 @@ class UserController
       return false;
     }
 
+  }
+
+  Future<bool> signOutUser() async
+  {
+    try
+        {
+          auth.signOut();
+
+      return true;
+        }
+     catch(e)
+    {
+      return false;
+    }
+
+  }
+
+  Future<MyUser> checkUserSignInInfo() async
+  {
+    try
+        {
+          MyUser myUser=MyUser();
+          myUser.isLoadingStartUpData=true;
+          currentUser=myUser;
+          auth.authStateChanges().listen((event) async {
+            if(event!.uid==null)
+            {
+              myUser.id=null;
+              myUser.isLoadingStartUpData=false;
+              currentUser=myUser;
+            }
+            else
+            {
+              myUser.id=event.uid;
+              myUser=await UserDatabase().getUserById(auth.currentUser!.uid);
+            }
+          });
+          return myUser;
+        }
+    catch(e)
+    {
+      print(e);
+      return MyUser();
+
+    }
   }
 
   bool isValidEmail(String email) {

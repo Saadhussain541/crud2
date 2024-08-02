@@ -11,6 +11,7 @@ class MyUser
   String? email;
   String? password;
   Timestamp? createdTime;
+  bool? isLoadingStartUpData;
 
   MyUser(
       {this.id,
@@ -21,6 +22,7 @@ class MyUser
       this.phone,
       this.email,
       this.password,
-      this.createdTime
+      this.createdTime,
+        this.isLoadingStartUpData
       });
 }
