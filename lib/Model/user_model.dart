@@ -26,3 +26,9 @@ class MyUser
         this.isLoadingStartUpData
       });
 }
+
+class ProductModel{
+  final String? name;
+
+  ProductModel({this.name});
+}

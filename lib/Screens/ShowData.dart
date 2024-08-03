@@ -1,5 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crud2/Controller/UserController/user_controller.dart';
+import 'package:crud2/Model/user_model.dart';
 import 'package:crud2/Screens/DetailScreen.dart';
 import 'package:crud2/Screens/UpdateScreen.dart';
 import 'package:crud2/Screens/wistListScreen.dart';
@@ -13,6 +15,7 @@ class ShowData extends StatefulWidget {
 
 class _ShowDataState extends State<ShowData> {
   String? search;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,10 +47,12 @@ class _ShowDataState extends State<ShowData> {
 
               ),
               const SizedBox(height: 20,),
+
               StreamBuilder(
                 stream:search==''|| search==null?FirebaseFirestore.instance.collection('product').snapshots():
                 FirebaseFirestore.instance.collection('product').where('product_name',isGreaterThanOrEqualTo: '$search').where('product_name',isLessThanOrEqualTo: '${search!}\uf8ff').snapshots()
                 ,
+
                 builder: (context, snapshot) {
                   if(snapshot.connectionState==ConnectionState.waiting)
                     {

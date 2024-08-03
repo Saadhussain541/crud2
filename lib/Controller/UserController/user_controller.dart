@@ -162,3 +162,42 @@ class UserController
   }
 
 }
+
+
+class ProductService{
+
+
+  Stream<List<ProductModel>> getProduct(String name){
+    return FirebaseFirestore.instance.collection("product1").snapshots().map((snapshot){
+      return snapshot.docs.map((doc){
+
+        Map<String, dynamic> pData = doc.data();
+
+        return ProductModel(
+          name: pData['name']
+        );
+      }).where((book){
+        if(name == null || name.isEmpty){
+          return true;
+        }
+        else{
+          return book.name!.toLowerCase().contains(name.toLowerCase());
+        }
+      }).toList();
+    });
+  }
+
+  Stream<List<ProductModel>> getAllProduct(){
+    return FirebaseFirestore.instance.collection("product1").snapshots().map((snapshot){
+      return snapshot.docs.map((doc){
+
+        Map<String, dynamic> pData = doc.data();
+
+        return ProductModel(
+            name: pData['name']
+        );
+      }).toList();
+    });
+  }
+
+}
